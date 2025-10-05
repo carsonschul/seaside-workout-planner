@@ -10,7 +10,7 @@ export default function Planner() {
         { Day: "Saturday", Focus: "" },
         { Day: "Sunday", Focus: "" }
     ]);
-    const presetMuscles = [
+    const presetFocus = [
         "Full Body",
         "Push",
         "Pull",
@@ -59,9 +59,11 @@ export default function Planner() {
         ]
     }
 
-    const [pendingSplit, setPendingSplit] = useState("Choose a split:")
+    const [pendingSplit, setPendingSplit] = useState("")
+    const [pendingFocus, setPendingFocus] = useState("")
     const [showSplitDropdown, setShowSplitDropdown] = useState(false);
-    const [selectedMuscle, setSelectedMuscle] = useState(false);
+    const [showFocusDropdown, setShowFocusDropdown] = useState(null);
+    const [warningMessage, setWarningMessage] = useState(null);
 
     return (
         <div
@@ -91,7 +93,7 @@ export default function Planner() {
                             value={pendingSplit}
                             onChange={(e) => setPendingSplit(e.target.value)}>
                             <option
-                                value="Choose a split:"
+                                value=""
                                 disabled>
                                 Choose a split:
                             </option>
@@ -107,14 +109,19 @@ export default function Planner() {
                             <button
                                 className="bg-green-400 hover:bg-green-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                 onClick={() => {
-                                    setShowSplitDropdown(false);
-                                    setSchedules(schedules.map(s => (
-                                        {
-                                            ...s,
-                                            Focus: splitSchedules[pendingSplit].find(d => (d.Day === s.Day))?.Muscle || ""
-                                        }
-                                    )))
-                                    setPendingSplit("Choose a split:");
+                                    if (pendingSplit === "") {
+                                        setWarningMessage("split");
+                                    } else {
+                                        setShowSplitDropdown(false);
+                                        setSchedules(schedules.map(s => (
+                                            {
+                                                ...s,
+                                                Focus: splitSchedules[pendingSplit].find(d => (d.Day === s.Day))?.Muscle || ""
+                                            }
+                                        )))
+                                        setPendingSplit("");
+                                        setWarningMessage(null);
+                                    }
                                 }}>
                                 Confirm
                             </button>
@@ -122,11 +129,15 @@ export default function Planner() {
                                 className="bg-red-400 hover:bg-red-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                 onClick={() => {
                                     setShowSplitDropdown(false);
-                                    setPendingSplit("Choose a split:")
+                                    setPendingSplit("")
+                                    setWarningMessage(null);
                                 }}>
                                 Cancel
                             </button>
                         </div>
+                        {warningMessage === "split" && (
+                            <p className="text-lg text-red-600 text-center">Please choose a split</p>
+                        )}
                     </div>
                 )}
             </div>
@@ -139,14 +150,65 @@ export default function Planner() {
                             className="text-3xl font-bold">
                             {s.Day}
                         </h2>
-                        {!s.Focus && (
+                        {(!s.Focus && (showFocusDropdown !== s.Day)) && (
                             <button
                                 className="text-lg bg-white hover:bg-gray-100 transition-colors duration-200 rounded-xl px-4 py-2 shadow-lg cursor-pointer"
-                                onClick={() => (
-                                    alert("Feature coming soon!")
-                                )}>
+                                onClick={() => { setShowFocusDropdown(s.Day) }}
+                            >
                                 Select muscle focus
                             </button>
+                        )}
+                        {showFocusDropdown === s.Day && (
+                            <div className="flex flex-col gap-4">
+                                <select
+                                    className="bg-white text-lg hover:bg-gray-100 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    value={pendingFocus}
+                                    onChange={(e) => setPendingFocus(e.target.value)}>
+                                    <option
+                                        value=""
+                                        disabled>
+                                        Choose a focus:
+                                    </option>
+                                    {presetFocus.map(focus => (
+                                        <option
+                                            key={focus}
+                                            value={focus}>
+                                            {focus}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="flex gap-4">
+                                    <button
+                                        className="bg-green-400 hover:bg-green-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => {
+                                            if (pendingFocus === "") {
+                                                setWarningMessage("focus")
+                                            } else {
+                                                setSchedules(schedules.map(d => (
+                                                    d.Day === s.Day ? { ...d, Focus: `Focus: ${pendingFocus}` } : d
+                                                )));
+                                                setShowFocusDropdown(null);
+                                                setPendingFocus("Choose a focus:");
+                                                setWarningMessage(null);
+                                            }
+                                        }
+                                        }>
+                                        Confirm
+                                    </button>
+                                    <button
+                                        className="bg-red-400 hover:bg-red-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => {
+                                            setShowFocusDropdown(null);
+                                            setPendingFocus("");
+                                            setWarningMessage(null);
+                                        }}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        {(showFocusDropdown === s.Day) && (warningMessage === "focus") && (
+                            <p className="text-lg text-red-600 text-center">Please choose a focus</p>
                         )}
                         {s.Focus && (
                             <div className="flex gap-4 justify-center items-center">

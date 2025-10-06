@@ -64,6 +64,7 @@ export default function Planner() {
     const [showSplitDropdown, setShowSplitDropdown] = useState(false);
     const [showFocusDropdown, setShowFocusDropdown] = useState(null);
     const [warningMessage, setWarningMessage] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     return (
         <div
@@ -73,23 +74,64 @@ export default function Planner() {
                 Plan Your Workout
             </h1>
             <div
-                className="flex flex-col items-center w-1/2 bg-gray-200 rounded-xl p-4 gap-4 shadow-lg">
+                className="flex flex-col items-center w-1/2 bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-400 rounded-xl p-4 gap-4 shadow-lg">
                 <h2
                     className="text-3xl text-center font-bold">Instructions:</h2>
                 <p
                     className="text-xl text-center">Begin by selecting a muscle focus for each day to create your workout split. Alternatively, you can select from a list of preset splits below.</p>
                 {!showSplitDropdown && (
-                    <button
-                        className="text-lg bg-amber-300 hover:bg-amber-400 transition-colors duration-200 rounded-xl shadow-lg px-4 py-2 cursor-pointer"
-                        onClick={() => setShowSplitDropdown(true)}>
-                        Use a preset split
-                    </button>
+                    <div className="flex gap-4">
+                        <button
+                            className="text-lg bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 rounded-lg shadow-lg px-4 py-2 cursor-pointer"
+                            onClick={() => setShowSplitDropdown(true)}>
+                            Use a preset split
+                        </button>
+                        {schedules.some(s => s.Focus) && (
+                            <button
+                                className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => setShowModal(true)}>
+                                Clear plan
+                            </button>
+                        )}
+                    </div>
+                )}
+                {showModal && (
+                    <div
+                        className="fixed inset-0 z-50 bg-black/50">
+                        <div
+                            className="flex justify-center items-center h-full">
+                            <div
+                                className="flex flex-col gap-4 bg-white rounded-lg p-8 border border-black shadow-2xl">
+                                <p
+                                    className="text-lg">
+                                    Are you sure you want to clear your plan?
+                                </p>
+                                <div className="flex gap-4 justify-center items-center">
+                                    <button
+                                        className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => {
+                                            setSchedules(schedules.map(s => (
+                                                { ...s, Focus: "" }
+                                            )));
+                                            setShowModal(false);
+                                        }}>
+                                        Confirm
+                                    </button>
+                                    <button
+                                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => setShowModal(false)}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 )}
                 {showSplitDropdown && (
                     <div
                         className="flex flex-col gap-4">
                         <select
-                            className="bg-white text-lg hover:bg-gray-100 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            className="bg-white text-lg hover:bg-amber-100 border border-amber-500 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                             value={pendingSplit}
                             onChange={(e) => setPendingSplit(e.target.value)}>
                             <option
@@ -107,7 +149,7 @@ export default function Planner() {
                         </select>
                         <div className="flex gap-4">
                             <button
-                                className="bg-green-400 hover:bg-green-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                 onClick={() => {
                                     if (pendingSplit === "") {
                                         setWarningMessage("split");
@@ -126,7 +168,7 @@ export default function Planner() {
                                 Confirm
                             </button>
                             <button
-                                className="bg-red-400 hover:bg-red-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                 onClick={() => {
                                     setShowSplitDropdown(false);
                                     setPendingSplit("")
@@ -145,15 +187,18 @@ export default function Planner() {
                 schedules.map(s => (
                     <div
                         key={s.Day}
-                        className="flex flex-col items-center gap-4 justify-center bg-sky-200 rounded-xl p-4 w-1/2 shadow-lg">
+                        className="flex flex-col items-center gap-4 justify-center bg-gradient-to-b from-sky-100 to-sky-200 border border-sky-400 rounded-xl p-4 w-1/2 shadow-lg">
                         <h2
                             className="text-3xl font-bold">
                             {s.Day}
                         </h2>
                         {(!s.Focus && (showFocusDropdown !== s.Day)) && (
                             <button
-                                className="text-lg bg-white hover:bg-gray-100 transition-colors duration-200 rounded-xl px-4 py-2 shadow-lg cursor-pointer"
-                                onClick={() => { setShowFocusDropdown(s.Day) }}
+                                className="bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => {
+                                    setShowFocusDropdown(s.Day);
+                                    setShowSplitDropdown(false);
+                                }}
                             >
                                 Select muscle focus
                             </button>
@@ -161,7 +206,7 @@ export default function Planner() {
                         {showFocusDropdown === s.Day && (
                             <div className="flex flex-col gap-4">
                                 <select
-                                    className="bg-white text-lg hover:bg-gray-100 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    className="bg-white text-lg hover:bg-amber-100 border border-amber-500 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                     value={pendingFocus}
                                     onChange={(e) => setPendingFocus(e.target.value)}>
                                     <option
@@ -179,7 +224,7 @@ export default function Planner() {
                                 </select>
                                 <div className="flex gap-4">
                                     <button
-                                        className="bg-green-400 hover:bg-green-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                         onClick={() => {
                                             if (pendingFocus === "") {
                                                 setWarningMessage("focus")
@@ -188,7 +233,7 @@ export default function Planner() {
                                                     d.Day === s.Day ? { ...d, Focus: `Focus: ${pendingFocus}` } : d
                                                 )));
                                                 setShowFocusDropdown(null);
-                                                setPendingFocus("Choose a focus:");
+                                                setPendingFocus("");
                                                 setWarningMessage(null);
                                             }
                                         }
@@ -196,7 +241,7 @@ export default function Planner() {
                                         Confirm
                                     </button>
                                     <button
-                                        className="bg-red-400 hover:bg-red-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                         onClick={() => {
                                             setShowFocusDropdown(null);
                                             setPendingFocus("");
@@ -211,18 +256,27 @@ export default function Planner() {
                             <p className="text-lg text-red-600 text-center">Please choose a focus</p>
                         )}
                         {s.Focus && (
-                            <div className="flex gap-4 justify-center items-center">
+                            <div className="flex flex-col gap-4 justify-center items-center">
                                 <p className="text-lg font-bold">
                                     {s.Focus}
                                 </p>
-                                <button
-                                    className="bg-red-400 hover:bg-red-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                                    onClick={() => setSchedules(
-                                        schedules.map(d => (
-                                            d.Day === s.Day ? { ...d, Focus: "" } : d
-                                        )))}>
-                                    Delete
-                                </button>
+                                <div className="flex gap-4">
+                                    {s.Focus !== "Rest Day" && (
+                                        <button
+                                            className="bg-white text-lg hover:bg-amber-100 border border-amber-500 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                            onClick={() => alert("Feature coming soon!")}>
+                                            Add Lift/Exercise
+                                        </button>
+                                    )}
+                                    <button
+                                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => setSchedules(
+                                            schedules.map(d => (
+                                                d.Day === s.Day ? { ...d, Focus: "" } : d
+                                            )))}>
+                                        Clear day
+                                    </button>
+                                </div>
                             </div>
                         )}
                         <p

@@ -11,12 +11,16 @@ export default function DayCard({
     setWarningMessage,
     setSchedules,
     schedules,
-    liftInput,
-    setLiftInput,
-    pendingLift,
-    setPendingLift,
+    pendingExercise,
+    setPendingExercise,
     showModal,
-    setShowModal
+    setShowModal,
+    pendingWeight,
+    setPendingWeight,
+    pendingSets,
+    setPendingSets,
+    pendingReps,
+    setPendingReps,
 }) {
     return (
         <div
@@ -96,20 +100,29 @@ export default function DayCard({
                 <p className="text-xl font-bold text-center ">{s.Focus}</p>
             )}
 
-            {/* --- Lifts or placeholder --- */}
-            {s.Lifts.length === 0 ? (
-                <p className="text-lg">No lifting data yet</p>
+            {/* --- Exercises or placeholder --- */}
+            {s.Exercises.length === 0 ? (
+                <p className="text-lg">No exercise data yet</p>
             ) : (
-                <div className="flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-amber-100 to-amber-200 border border-amber-400 shadow-lg rounded-xl px-6 py-4">
+                <div className="flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-rose-100 to-rose-200 border border-red-400 shadow-lg rounded-xl px-6 py-4">
                     <p className="font-bold text-xl">Exercises:</p>
                     <ul className="flex flex-col gap-4 text-lg">
-                        {s.Lifts.map((lift, i) => (
-                            <li key={i} className="flex gap-4 items-center justify-between">
-                                <span className="text-lg">{i + 1}.</span>
-                                <span className="flex-1">{lift}</span>
+                        {s.Exercises.map((exercise, i) => (
+                            <li key={i} className="flex gap-4 items-center justify-between bg-gradient-to-b from-amber-100 to-amber-200 rounded-xl border border-amber-400 px-6 py-4 shadow-lg">
+                                <div className="flex flex-col gap-4 items-center justify-center">
+                                    <div className="flex gap-4">
+                                        <span className="text-lg font-semibold">{i + 1}.</span>
+                                        <span className="font-semibold">{exercise.Exercise}</span>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <span>{`Weight: ${exercise.Weight}`}</span>
+                                        <span>{`Sets: ${exercise.Sets}`}</span>
+                                        <span>{`Reps: ${exercise.Reps.join(", ")}`}</span>
+                                    </div>
+                                </div>
                                 <button
                                     className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                                    onClick={() => setShowModal({ Type: "lift", Day: s.Day, Index: i })}
+                                    onClick={() => setShowModal({ Type: "exercise", Day: s.Day, Index: i })}
                                 >
                                     Delete
                                 </button>
@@ -120,12 +133,12 @@ export default function DayCard({
             )}
 
             {/* --- Bottom controls (always visible when focus exists) --- */}
-            {(s.Focus && liftInput !== s.Day) && (
+            {s.Focus && (
                 <div className="flex gap-4 mt-2">
                     {s.Focus !== "Rest Day" && (
                         <button
                             className="bg-white text-lg hover:bg-amber-100 border border-amber-500 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => setLiftInput(s.Day)}
+                            onClick={() => { setShowModal({ Type: "exercise-input", Day: s.Day }) }}
                         >
                             Add Exercise
                         </button>
@@ -139,59 +152,162 @@ export default function DayCard({
                 </div>
             )}
 
-            {/* --- Lift Input (below buttons, appears only when adding) --- */}
-            {liftInput === s.Day && (
-                <div className="flex flex-col gap-4 items-center justify-center">
-                    <label htmlFor="lift-input" className="text-lg">
-                        Enter Exercise:
-                    </label>
-                    <input
-                        id="lift-input"
-                        type="text"
-                        value={pendingLift}
-                        onChange={(e) => setPendingLift(e.target.value)}
-                        className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
-                    />
-                    <div className="flex gap-4">
-                        <button
-                            className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => {
-                                if (!pendingLift.trim()) return setWarningMessage("lift");
-                                setSchedules(
-                                    schedules.map((d) =>
-                                        d.Day === s.Day
-                                            ? { ...d, Lifts: [...d.Lifts, pendingLift] }
-                                            : d
-                                    )
-                                );
-                                setPendingLift("");
-                                setLiftInput(null);
-                                setWarningMessage(null);
-                            }}
-                        >
-                            Confirm
-                        </button>
-                        <button
-                            className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => {
-                                setPendingLift("");
-                                setLiftInput(null);
-                                setWarningMessage(null);
-                            }}
-                        >
-                            Cancel
-                        </button>
+            {/* --- Exercise Input (below buttons, appears only when adding) --- */}
+            {(showModal.Type === "exercise-input" && showModal.Day === s.Day) && (
+                <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
+                    <div className="bg-white border border-black rounded-lg shadow-2xl p-8 flex flex-col gap-4 max-h-[80vh] overflow-y-auto">
+                        <div className="flex flex-col gap-4 items-center justify-center">
+                            <div className="flex gap-4 justify-between w-full items-center">
+                                <label htmlFor="exercise-input" className="text-lg flex-1 text-center">
+                                    Enter exercise:
+                                </label>
+                                <input
+                                    id="exercise-input"
+                                    type="text"
+                                    value={pendingExercise}
+                                    onChange={(e) => setPendingExercise(e.target.value)}
+                                    className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
+                                />
+                            </div>
+                            <div className="flex gap-4 justify-between w-full items-center">
+                                <label
+                                    htmlFor="weight-input"
+                                    className="text-lg flex-1 text-center">
+                                    Enter weight:
+                                </label>
+                                <input
+                                    className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
+                                    id="weight-input"
+                                    type="number"
+                                    value={pendingWeight}
+                                    onChange={(e) => setPendingWeight(e.target.value)} />
+                            </div>
+                            <div className="flex gap-4 justify-between w-full items-center">
+                                <label
+                                    htmlFor="sets-input"
+                                    className="text-lg flex-1 text-center">
+                                    Enter sets:
+                                </label>
+                                <input
+                                    className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
+                                    id="sets-input"
+                                    type="number"
+                                    value={pendingSets}
+                                    onChange={(e) => {
+                                        const input = e.target.value
+                                        if (input === "") {
+                                            setPendingSets("");
+                                            return;
+                                        }
+                                        const value = Number(input);
+                                        if (value < 0) return setPendingSets("0");
+                                        if (value > 100) return setPendingSets("100");
+                                        setPendingSets(value);
+                                        setPendingReps(Array(value).fill(""));
+                                    }} />
+                            </div>
+                            {pendingSets > 0 && (
+                                <>
+                                    {Array.from({ length: pendingSets }).map((_, i) => (
+                                        <div key={i} className="flex gap-4 justify-between w-full items-center">
+                                            <label className="text-lg flex-1 text-center">{`Set ${i + 1}:`}</label>
+                                            <input
+                                                type="number"
+                                                placeholder="Reps"
+                                                className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
+                                                value={pendingReps[i] || ""}
+                                                onChange={(e) => {
+                                                    const newReps = [...pendingReps];
+                                                    newReps[i] = e.target.value;
+                                                    setPendingReps(newReps);
+                                                }}
+
+                                            />
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                            <div className="flex gap-4">
+                                <button
+                                    className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    onClick={() => {
+                                        const missing = [];
+                                        let isError = false;
+                                        if (!pendingExercise.trim()) {
+                                            missing.push("exercise");
+                                            isError = true;
+                                        }
+                                        if (!pendingWeight.trim()) {
+                                            missing.push("weight");
+                                            isError = true;
+                                        }
+                                        if (pendingSets === "" || pendingSets <= 0) {
+                                            missing.push("sets")
+                                            isError = true;
+                                        }
+                                        if (pendingReps.length === 0 || pendingReps.some(r => !r.trim())) {
+                                            missing.push("reps");
+                                            isError = true;
+                                        }
+                                        if (isError) return setWarningMessage(missing);
+                                        setSchedules(
+                                            schedules.map((d) =>
+                                                d.Day === s.Day
+                                                    ? { ...d, Exercises: [...d.Exercises, { Exercise: pendingExercise, Weight: pendingWeight, Sets: pendingSets, Reps: pendingReps }] }
+                                                    : d
+                                            )
+                                        );
+                                        setPendingExercise("");
+                                        setPendingWeight("");
+                                        setPendingSets("");
+                                        setPendingReps("");
+                                        setWarningMessage(null);
+                                        setShowModal({ Type: null, Day: null });
+                                    }}
+                                >
+                                    Confirm
+                                </button>
+                                <button
+                                    className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    onClick={() => {
+                                        setPendingExercise("");
+                                        setPendingWeight("");
+                                        setPendingSets("");
+                                        setPendingReps("");
+                                        setWarningMessage(null);
+                                        setShowModal({ Type: null, Day: null });
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                            {warningMessage?.includes("exercise") && (
+                                <p className="text-lg text-red-600 text-center">
+                                    Please enter an exercise
+                                </p>
+                            )}
+                            {warningMessage?.includes("weight") && (
+                                <p className="text-lg text-red-600 text-center">
+                                    Please enter weight
+                                </p>
+                            )}
+                            {warningMessage?.includes("sets") && (
+                                <p className="text-lg text-red-600 text-center">
+                                    Please enter sets
+                                </p>
+                            )}
+                            {warningMessage?.includes("reps") && (
+                                <p className="text-lg text-red-600 text-center">
+                                    Please enter reps
+                                </p>
+                            )}
+                        </div>
                     </div>
-                    {warningMessage === "lift" && (
-                        <p className="text-lg text-red-600 text-center">
-                            Please type a lift/exercise
-                        </p>
-                    )}
                 </div>
             )}
 
-            {/* --- Lift Delete Modal --- */}
-            {showModal.Type === "lift" && showModal.Day === s.Day && (
+            {/* --- Exercise Delete Modal --- */}
+            {showModal.Type === "exercise" && showModal.Day === s.Day && (
                 <ConfirmModal
                     message={
                         <>
@@ -206,7 +322,7 @@ export default function DayCard({
                                 d.Day === s.Day
                                     ? {
                                         ...d,
-                                        Lifts: d.Lifts.filter(
+                                        Exercises: d.Exercises.filter(
                                             (_, index) => index !== showModal.Index
                                         ),
                                     }

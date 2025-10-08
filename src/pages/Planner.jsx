@@ -5,13 +5,13 @@ import ConfirmModal from "../components/ConfirmModal.jsx";
 export default function Planner() {
 
     const [schedules, setSchedules] = useState([
-        { Day: "Monday", Focus: "", Lifts: [] },
-        { Day: "Tuesday", Focus: "", Lifts: [] },
-        { Day: "Wednesday", Focus: "", Lifts: [] },
-        { Day: "Thursday", Focus: "", Lifts: [] },
-        { Day: "Friday", Focus: "", Lifts: [] },
-        { Day: "Saturday", Focus: "", Lifts: [] },
-        { Day: "Sunday", Focus: "", Lifts: [] }
+        { Day: "Monday", Focus: "", Exercises: [] },
+        { Day: "Tuesday", Focus: "", Exercises: [] },
+        { Day: "Wednesday", Focus: "", Exercises: [] },
+        { Day: "Thursday", Focus: "", Exercises: [] },
+        { Day: "Friday", Focus: "", Exercises: [] },
+        { Day: "Saturday", Focus: "", Exercises: [] },
+        { Day: "Sunday", Focus: "", Exercises: [] }
     ]);
     const presetFocus = [
         "Full Body",
@@ -68,14 +68,16 @@ export default function Planner() {
     const [showFocusDropdown, setShowFocusDropdown] = useState(null);
     const [warningMessage, setWarningMessage] = useState(null);
     const [showModal, setShowModal] = useState({ Type: null, Day: null });
-    const [liftInput, setLiftInput] = useState(null);
-    const [pendingLift, setPendingLift] = useState("");
+    const [pendingExercise, setPendingExercise] = useState("");
+    const [pendingWeight, setPendingWeight] = useState("");
+    const [pendingSets, setPendingSets] = useState("");
+    const [pendingReps, setPendingReps] = useState([]);
 
     return (
         <div
-            className="flex flex-col min-h-screen items-center gap-4">
+            className="flex flex-col min-h-screen items-center gap-4 bg-gradient-to-b from-white to-gray-50">
             <h1
-                className="text-5xl font-bold text-center w-screen p-6 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg tracking-wide rounded">
+                className="text-5xl font-bold text-center w-screen p-6 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg tracking-wide rounded border-y-4 border-amber-400">
                 Plan Your Workout
             </h1>
             <Instructions
@@ -107,12 +109,16 @@ export default function Planner() {
                         setWarningMessage={setWarningMessage}
                         schedules={schedules}
                         setSchedules={setSchedules}
-                        liftInput={liftInput}
-                        setLiftInput={setLiftInput}
-                        pendingLift={pendingLift}
-                        setPendingLift={setPendingLift}
+                        pendingExercise={pendingExercise}
+                        setPendingExercise={setPendingExercise}
                         showModal={showModal}
                         setShowModal={setShowModal}
+                        pendingWeight={pendingWeight}
+                        setPendingWeight={setPendingWeight}
+                        pendingSets={pendingSets}
+                        setPendingSets={setPendingSets}
+                        pendingReps={pendingReps}
+                        setPendingReps={setPendingReps}
                     />
                 ))
             }
@@ -126,7 +132,7 @@ export default function Planner() {
                     onConfirm={() => {
                         setSchedules(
                             schedules.map(d => (
-                                d.Day === showModal.Day ? { ...d, Focus: "", Lifts: [] } : d
+                                d.Day === showModal.Day ? { ...d, Focus: "", Exercises: [] } : d
                             )));
                         setShowModal({ Type: null, Day: null });
                     }}

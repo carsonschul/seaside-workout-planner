@@ -19,7 +19,7 @@ export default function Instructions({
             <h2
                 className="text-3xl text-center font-bold">Instructions:</h2>
             <p
-                className="text-xl text-center">Begin by selecting a muscle focus for each day to create your workout split. Alternatively, you can select from a list of preset splits below.</p>
+                className="text-lg text-center">Begin by selecting a muscle focus for each day to create your workout split. Alternatively, you can select from a list of preset splits below.</p>
             {!showSplitDropdown && (
                 <div className="flex gap-4">
                     <button
@@ -48,7 +48,7 @@ export default function Instructions({
                     }
                     onConfirm={() => {
                         setSchedules(schedules.map(s => (
-                            { ...s, Focus: "", Lifts: [] }
+                            { ...s, Focus: "", Exercises: [] }
                         )));
                         setShowModal({ Type: null, Day: null });
                     }}

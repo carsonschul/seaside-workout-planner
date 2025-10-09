@@ -21,6 +21,8 @@ export default function DayCard({
     setPendingSets,
     pendingReps,
     setPendingReps,
+    isBodyweight,
+    setIsBodyweight
 }) {
     return (
         <div
@@ -104,11 +106,11 @@ export default function DayCard({
             {s.Exercises.length === 0 ? (
                 <p className="text-lg">No exercise data yet</p>
             ) : (
-                <div className="flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-rose-100 to-rose-200 border border-red-400 shadow-lg rounded-xl px-6 py-4">
+                <div className="flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-rose-100 to-rose-200 border border-red-400 shadow-inner rounded-xl px-6 py-4">
                     <p className="font-bold text-xl">Exercises:</p>
                     <ul className="flex flex-col gap-4 text-lg">
                         {s.Exercises.map((exercise, i) => (
-                            <li key={i} className="flex gap-4 items-center justify-between bg-gradient-to-b from-amber-100 to-amber-200 rounded-xl border border-amber-400 px-6 py-4 shadow-lg">
+                            <li key={i} className="flex gap-4 items-center justify-between bg-gradient-to-b from-amber-100 to-amber-200 rounded-xl border border-amber-400 px-6 py-4 shadow-inner">
                                 <div className="flex flex-col gap-4 items-center justify-center">
                                     <div className="flex gap-4">
                                         <span className="text-lg font-semibold">{i + 1}.</span>
@@ -120,12 +122,28 @@ export default function DayCard({
                                         <span>{`Reps: ${exercise.Reps.join(", ")}`}</span>
                                     </div>
                                 </div>
-                                <button
-                                    className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                                    onClick={() => setShowModal({ Type: "exercise", Day: s.Day, Index: i })}
-                                >
-                                    Delete
-                                </button>
+                                <div className="flex gap-4">
+                                    <button
+                                        className="bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => {
+                                            const ex = s.Exercises[i];
+                                            setPendingExercise(ex.Exercise);
+                                            setPendingWeight(ex.Weight);
+                                            setPendingSets(ex.Sets);
+                                            setPendingReps(ex.Reps);
+                                            setIsBodyweight(ex.Weight === "Bodyweight");
+                                            setShowModal({ Type: "edit-exercise", Day: s.Day, Index: i });
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        onClick={() => setShowModal({ Type: "exercise", Day: s.Day, Index: i })}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -153,7 +171,7 @@ export default function DayCard({
             )}
 
             {/* --- Exercise Input (below buttons, appears only when adding) --- */}
-            {(showModal.Type === "exercise-input" && showModal.Day === s.Day) && (
+            {((showModal.Type === "exercise-input" || showModal.Type === "edit-exercise") && showModal.Day === s.Day) && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
                     <div className="bg-white border border-black rounded-lg shadow-2xl p-8 flex flex-col gap-4 max-h-[80vh] overflow-y-auto">
                         <div className="flex flex-col gap-4 items-center justify-center">
@@ -175,12 +193,25 @@ export default function DayCard({
                                     className="text-lg flex-1 text-center">
                                     Enter weight:
                                 </label>
-                                <input
-                                    className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
-                                    id="weight-input"
-                                    type="number"
-                                    value={pendingWeight}
-                                    onChange={(e) => setPendingWeight(e.target.value)} />
+                                <div className="relative">
+                                    <input
+                                        className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
+                                        id="weight-input"
+                                        type="number"
+                                        disabled={isBodyweight}
+                                        value={isBodyweight ? "" : pendingWeight}
+                                        onChange={(e) => {
+                                            let value = e.target.value;
+                                            if (value.length > 5) value = value.slice(0, 5);
+                                            setPendingWeight(value);
+                                        }}
+                                        placeholder={isBodyweight ? "Bodyweight" : ""} />
+                                    <button
+                                        className={!isBodyweight ? "bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1" : "bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1"}
+                                        onClick={() => { setIsBodyweight(!isBodyweight); setPendingWeight("Bodyweight") }}>
+                                        {isBodyweight ? "Clear" : "BW?"}
+                                    </button>
+                                </div>
                             </div>
                             <div className="flex gap-4 justify-between w-full items-center">
                                 <label
@@ -228,45 +259,89 @@ export default function DayCard({
                                 </>
                             )}
                             <div className="flex gap-4">
+                                {/* ✅ Confirm Button */}
                                 <button
                                     className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                     onClick={() => {
                                         const missing = [];
                                         let isError = false;
+
                                         if (!pendingExercise.trim()) {
                                             missing.push("exercise");
                                             isError = true;
                                         }
-                                        if (!pendingWeight.trim()) {
+                                        if (!pendingWeight.trim() && !isBodyweight) {
                                             missing.push("weight");
                                             isError = true;
                                         }
                                         if (pendingSets === "" || pendingSets <= 0) {
-                                            missing.push("sets")
+                                            missing.push("sets");
                                             isError = true;
                                         }
-                                        if (pendingReps.length === 0 || pendingReps.some(r => !r.trim())) {
+                                        if (pendingReps.length === 0 || pendingReps.some((r) => !r.trim())) {
                                             missing.push("reps");
                                             isError = true;
                                         }
                                         if (isError) return setWarningMessage(missing);
-                                        setSchedules(
-                                            schedules.map((d) =>
-                                                d.Day === s.Day
-                                                    ? { ...d, Exercises: [...d.Exercises, { Exercise: pendingExercise, Weight: pendingWeight, Sets: pendingSets, Reps: pendingReps }] }
-                                                    : d
-                                            )
-                                        );
+
+                                        // ✅ Different behavior depending on edit vs add
+                                        if (showModal.Type === "edit-exercise") {
+                                            // Replace the existing exercise at that index
+                                            setSchedules(
+                                                schedules.map((d) =>
+                                                    d.Day === s.Day
+                                                        ? {
+                                                            ...d,
+                                                            Exercises: d.Exercises.map((ex, idx) =>
+                                                                idx === showModal.Index
+                                                                    ? {
+                                                                        Exercise: pendingExercise,
+                                                                        Weight: pendingWeight,
+                                                                        Sets: pendingSets,
+                                                                        Reps: pendingReps,
+                                                                    }
+                                                                    : ex
+                                                            ),
+                                                        }
+                                                        : d
+                                                )
+                                            );
+                                        } else {
+                                            // Add a new exercise
+                                            setSchedules(
+                                                schedules.map((d) =>
+                                                    d.Day === s.Day
+                                                        ? {
+                                                            ...d,
+                                                            Exercises: [
+                                                                ...d.Exercises,
+                                                                {
+                                                                    Exercise: pendingExercise,
+                                                                    Weight: pendingWeight,
+                                                                    Sets: pendingSets,
+                                                                    Reps: pendingReps,
+                                                                },
+                                                            ],
+                                                        }
+                                                        : d
+                                                )
+                                            );
+                                        }
+
+                                        // Reset everything
                                         setPendingExercise("");
                                         setPendingWeight("");
                                         setPendingSets("");
                                         setPendingReps("");
+                                        setIsBodyweight(false);
                                         setWarningMessage(null);
                                         setShowModal({ Type: null, Day: null });
                                     }}
                                 >
                                     Confirm
                                 </button>
+
+                                {/* ❌ Cancel Button */}
                                 <button
                                     className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                     onClick={() => {
@@ -274,6 +349,7 @@ export default function DayCard({
                                         setPendingWeight("");
                                         setPendingSets("");
                                         setPendingReps("");
+                                        setIsBodyweight(false);
                                         setWarningMessage(null);
                                         setShowModal({ Type: null, Day: null });
                                     }}

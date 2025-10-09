@@ -72,10 +72,11 @@ export default function Planner() {
     const [pendingWeight, setPendingWeight] = useState("");
     const [pendingSets, setPendingSets] = useState("");
     const [pendingReps, setPendingReps] = useState([]);
+    const [isBodyweight, setIsBodyweight] = useState(false);
 
     return (
         <div
-            className="flex flex-col min-h-screen items-center gap-4 bg-gradient-to-b from-white to-gray-50">
+            className="flex flex-col min-h-screen items-center gap-4">
             <h1
                 className="text-5xl font-bold text-center w-screen p-6 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg tracking-wide rounded border-y-4 border-amber-400">
                 Plan Your Workout
@@ -119,6 +120,8 @@ export default function Planner() {
                         setPendingSets={setPendingSets}
                         pendingReps={pendingReps}
                         setPendingReps={setPendingReps}
+                        isBodyweight={isBodyweight}
+                        setIsBodyweight={setIsBodyweight}
                     />
                 ))
             }

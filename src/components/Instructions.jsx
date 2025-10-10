@@ -15,15 +15,15 @@ export default function Instructions({
 }) {
     return (
         <div
-            className="flex flex-col items-center w-1/2 bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-400 rounded-xl p-4 gap-4 shadow-lg">
+            className="flex flex-col items-center width-full md:w-1/2 bg-white border-3 border-amber-400 rounded-3xl shadow-lg overflow-hidden">
             <h2
-                className="text-3xl text-center font-bold">Instructions:</h2>
+                className="text-3xl text-center text-white text-shadow-lg font-bold p-4 bg-gradient-to-r from-sky-300 to-sky-400 border-b-3 border-amber-400 w-full">Instructions:</h2>
             <p
-                className="text-lg text-center">Begin by selecting a muscle focus for each day to create your workout split. Alternatively, you can select from a list of preset splits below.</p>
+                className="text-lg text-center p-8">Begin by selecting a muscle focus for each day to create your workout split. Alternatively, you can select from a list of preset splits below.</p>
             {!showSplitDropdown && (
-                <div className="flex gap-4">
+                <div className="flex gap-4 pb-4 bg-white w-full items-center justify-center">
                     <button
-                        className="text-lg bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 rounded-lg shadow-lg px-4 py-2 cursor-pointer"
+                        className="text-white text-shadow-lg bg-sky-400 hover:bg-sky-500 border-2 border-sky-600 text-lg transition-colors duration-200 rounded-lg shadow-lg px-4 py-2 cursor-pointer"
                         onClick={() => {
                             setShowSplitDropdown(true);
                             setShowFocusDropdown(false);
@@ -32,7 +32,7 @@ export default function Instructions({
                     </button>
                     {schedules.some(s => s.Focus) && (
                         <button
-                            className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            className="bg-red-400 text-white text-shadow-lg hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                             onClick={() => setShowModal({ Type: "plan", Day: null })}>
                             Clear plan
                         </button>
@@ -57,9 +57,9 @@ export default function Instructions({
             )}
             {showSplitDropdown && (
                 <div
-                    className="flex flex-col gap-4">
+                    className="flex flex-col gap-4 pb-4 bg-white w-full items-center justify-center">
                     <select
-                        className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                        className="bg-white text-lg hover:bg-gray-100 border-2 border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                         value={pendingSplit}
                         onChange={(e) => setPendingSplit(e.target.value)}>
                         <option
@@ -77,7 +77,7 @@ export default function Instructions({
                     </select>
                     <div className="flex gap-4">
                         <button
-                            className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            className="bg-sky-400 text-white text-shadow-lg hover:bg-sky-500 border-2 border-sky-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                             onClick={() => {
                                 if (pendingSplit === "") {
                                     setWarningMessage("split");
@@ -96,7 +96,7 @@ export default function Instructions({
                             Confirm
                         </button>
                         <button
-                            className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            className="bg-red-400 text-white text-shadow-lg hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                             onClick={() => {
                                 setShowSplitDropdown(false);
                                 setPendingSplit("")

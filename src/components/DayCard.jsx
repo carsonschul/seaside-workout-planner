@@ -27,104 +27,42 @@ export default function DayCard({
     return (
         <div
             key={s.Day}
-            className="flex flex-col items-center gap-4 justify-center bg-gradient-to-b from-sky-100 to-sky-200 border border-sky-400 rounded-xl p-4 w-1/2 shadow-lg"
+            className="flex flex-col items-center justify-center bg-gradient-to-r from-sky-100 to-sky-200 border-3 border-amber-400 rounded-3xl md:w-1/2 w-full shadow-lg overflow-hidden"
         >
-            {/* --- Day header --- */}
-            <h2 className="text-3xl font-bold">{s.Day}</h2>
 
-            {/* --- Focus selection or focus display --- */}
-            {!s.Focus && showFocusDropdown !== s.Day && (
-                <button
-                    className="bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                    onClick={() => {
-                        setShowFocusDropdown(s.Day);
-                        setShowSplitDropdown(false);
-                    }}
-                >
-                    Select muscle focus
-                </button>
-            )}
+            <div className="flex flex-col gap-2 items-center justify-center bg-gradient-to-r from-red-400 to-red-600 w-full py-4">
+                <h2 className="text-3xl font-bold text-white text-shadow-lg">{s.Day}</h2>
 
-            {showFocusDropdown === s.Day && (
-                <div className="flex flex-col gap-4">
-                    <select
-                        className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                        value={pendingFocus}
-                        onChange={(e) => setPendingFocus(e.target.value)}
-                    >
-                        <option value="" disabled>
-                            Choose a focus:
-                        </option>
-                        {presetFocus.map((focus) => (
-                            <option key={focus} value={focus}>
-                                {focus}
-                            </option>
-                        ))}
-                    </select>
-                    <div className="flex gap-4">
-                        <button
-                            className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => {
-                                if (pendingFocus === "") return setWarningMessage("focus");
-                                setSchedules(
-                                    schedules.map((d) =>
-                                        d.Day === s.Day ? { ...d, Focus: `Focus: ${pendingFocus}` } : d
-                                    )
-                                );
-                                setShowFocusDropdown(null);
-                                setPendingFocus("");
-                                setWarningMessage(null);
-                            }}
-                        >
-                            Confirm
-                        </button>
-                        <button
-                            className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => {
-                                setShowFocusDropdown(null);
-                                setPendingFocus("");
-                                setWarningMessage(null);
-                            }}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                    {warningMessage === "focus" && (
-                        <p className="text-lg text-red-600 text-center">
-                            Please choose a focus
-                        </p>
-                    )}
-                </div>
-            )}
+                {s.Focus ? (
+                    <p className="text-xl font-bold text-center text-white text-shadow-lg ">{s.Focus}</p>
+                ) : (
+                    <p className="text-xl font-bold text-center text-white text-shadow-lg ">No focus yet</p>
+                )}
 
-            {/* --- Focus display --- */}
-            {s.Focus && (
-                <p className="text-xl font-bold text-center ">{s.Focus}</p>
-            )}
+            </div>
 
-            {/* --- Exercises or placeholder --- */}
+
             {s.Exercises.length === 0 ? (
-                <p className="text-lg">No exercise data yet</p>
+                <p className="text-lg p-8 w-full h-full flex items-center justify-center bg-white border-t-3 border-amber-400">No exercise data yet</p>
             ) : (
-                <div className="flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-rose-100 to-rose-200 border border-red-400 shadow-inner rounded-xl px-6 py-4">
-                    <p className="font-bold text-xl">Exercises:</p>
-                    <ul className="flex flex-col gap-4 text-lg">
+                <div className="w-full">
+                    <ul className="flex flex-col text-lg w-full border-t-3 border-amber-400">
                         {s.Exercises.map((exercise, i) => (
-                            <li key={i} className="flex gap-4 items-center justify-between bg-gradient-to-b from-amber-100 to-amber-200 rounded-xl border border-amber-400 px-6 py-4 shadow-inner">
-                                <div className="flex flex-col gap-4 items-center justify-center">
-                                    <div className="flex gap-4">
+                            <li key={i} className="flex md:flex-row flex-col gap-8 items-center justify-between bg-white p-8 shadow-inner">
+                                <div className="flex flex-col gap-4 justify-center">
+                                    <div className="flex gap-4 justify-center md:justify-start">
                                         <span className="text-lg font-semibold">{i + 1}.</span>
                                         <span className="font-semibold">{exercise.Exercise}</span>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <span>{`Weight: ${exercise.Weight}`}</span>
-                                        <span>{`Sets: ${exercise.Sets}`}</span>
-                                        <span>{`Reps: ${exercise.Reps.join(", ")}`}</span>
+                                    <div className="flex gap-8">
+                                        <div className="flex flex-col border-r-2 border-amber-400 pr-4"><span className="font-semibold">Weight: </span>{exercise.Weight}</div>
+                                        <div className="flex flex-col"><span className="font-semibold">Sets: </span>{exercise.Sets}</div>
+                                        <div className="flex flex-col border-l-2 border-amber-400 pl-4"><span className="font-semibold">Reps: </span>{exercise.Reps.join(", ")}</div>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <button
-                                        className="bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        className="bg-amber-400 text-white text-shadow-lg hover:bg-amber-500 border-2 border-amber-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                         onClick={() => {
                                             const ex = s.Exercises[i];
                                             setPendingExercise(ex.Exercise);
@@ -138,7 +76,7 @@ export default function DayCard({
                                         Edit
                                     </button>
                                     <button
-                                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                        className="bg-red-400 text-white text-shadow-lg hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                         onClick={() => setShowModal({ Type: "exercise", Day: s.Day, Index: i })}
                                     >
                                         Delete
@@ -150,33 +88,97 @@ export default function DayCard({
                 </div>
             )}
 
-            {/* --- Bottom controls (always visible when focus exists) --- */}
-            {s.Focus && (
-                <div className="flex gap-4 mt-2">
-                    {s.Focus !== "Rest Day" && (
+            <div className="flex gap-4 pb-4 bg-white w-full items-center justify-center">
+                {s.Focus && (
+                    <>
+                        {s.Focus !== "Rest Day" && (
+                            <button
+                                className="text-white text-shadow-lg bg-sky-400 hover:bg-sky-500 border-2 border-sky-600 text-lg transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => { setShowModal({ Type: "exercise-input", Day: s.Day }) }}
+                            >
+                                Add Exercise
+                            </button>
+                        )}
                         <button
-                            className="bg-white text-lg hover:bg-amber-100 border border-amber-500 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                            onClick={() => { setShowModal({ Type: "exercise-input", Day: s.Day }) }}
+                            className="bg-red-400 text-white text-shadow-lg hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            onClick={() => setShowModal({ Type: "day", Day: s.Day })}
                         >
-                            Add Exercise
+                            Clear Day
                         </button>
-                    )}
-                    <button
-                        className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
-                        onClick={() => setShowModal({ Type: "day", Day: s.Day })}
-                    >
-                        Clear Day
-                    </button>
-                </div>
-            )}
+                    </>
+                )}
 
-            {/* --- Exercise Input (below buttons, appears only when adding) --- */}
+                {!s.Focus && showFocusDropdown !== s.Day && (
+                    <button
+                        className="text-white bg-sky-400 hover:bg-sky-500 border-2 border-sky-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                        onClick={() => {
+                            setShowFocusDropdown(s.Day);
+                            setShowSplitDropdown(false);
+                        }}
+                    >
+                        Select muscle focus
+                    </button>
+                )}
+
+                {showFocusDropdown === s.Day && (
+                    <div className="flex flex-col gap-4">
+                        <select
+                            className="bg-white text-lg hover:bg-gray-100 border-2 border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                            value={pendingFocus}
+                            onChange={(e) => setPendingFocus(e.target.value)}
+                        >
+                            <option value="" disabled>
+                                Choose a focus:
+                            </option>
+                            {presetFocus.map((focus) => (
+                                <option key={focus} value={focus}>
+                                    {focus}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex gap-4">
+                            <button
+                                className="text-white text-shadow-lg bg-sky-400 hover:bg-sky-500 border-2 border-sky-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => {
+                                    if (pendingFocus === "") return setWarningMessage("focus");
+                                    setSchedules(
+                                        schedules.map((d) =>
+                                            d.Day === s.Day ? { ...d, Focus: `Focus: ${pendingFocus}` } : d
+                                        )
+                                    );
+                                    setShowFocusDropdown(null);
+                                    setPendingFocus("");
+                                    setWarningMessage(null);
+                                }}
+                            >
+                                Confirm
+                            </button>
+                            <button
+                                className="text-white text-shadow-lg bg-red-400 hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                onClick={() => {
+                                    setShowFocusDropdown(null);
+                                    setPendingFocus("");
+                                    setWarningMessage(null);
+                                }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                        {warningMessage === "focus" && (
+                            <p className="text-lg text-red-600 text-center">
+                                Please choose a focus
+                            </p>
+                        )}
+                    </div>
+                )}
+            </div>
+
             {((showModal.Type === "exercise-input" || showModal.Type === "edit-exercise") && showModal.Day === s.Day) && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
-                    <div className="bg-white border border-black rounded-lg shadow-2xl p-8 flex flex-col gap-4 max-h-[80vh] overflow-y-auto">
-                        <div className="flex flex-col gap-4 items-center justify-center">
-                            <div className="flex gap-4 justify-between w-full items-center">
-                                <label htmlFor="exercise-input" className="text-lg flex-1 text-center">
+                <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center overflow-y-auto">
+                    <div className="bg-white border border-black rounded-lg shadow-2xl p-8 flex flex-col gap-4 max-h-[90dvh] max-w-[90vw] overflow-y-auto">
+                        <div className="flex flex-col gap-4 items-center justify-center max-w-full">
+                            <div className="flex flex-col gap-2 justify-between items-center w-full max-w-full">
+                                <label htmlFor="exercise-input" className="text-lg">
                                     Enter exercise:
                                 </label>
                                 <input
@@ -187,10 +189,10 @@ export default function DayCard({
                                     className="bg-white text-lg hover:bg-gray-100 border border-gray-400 transition-colors duration-200 px-4 py-2 rounded-lg shadow-lg"
                                 />
                             </div>
-                            <div className="flex gap-4 justify-between w-full items-center">
+                            <div className="flex flex-col gap-2 justify-between items-center w-full max-w-full">
                                 <label
                                     htmlFor="weight-input"
-                                    className="text-lg flex-1 text-center">
+                                    className="text-lg">
                                     Enter weight:
                                 </label>
                                 <div className="relative">
@@ -207,16 +209,16 @@ export default function DayCard({
                                         }}
                                         placeholder={isBodyweight ? "Bodyweight" : ""} />
                                     <button
-                                        className={!isBodyweight ? "bg-white hover:bg-amber-100 border border-amber-500 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1" : "bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1"}
-                                        onClick={() => { setIsBodyweight(!isBodyweight); setPendingWeight("Bodyweight") }}>
+                                        className={!isBodyweight ? "bg-amber-400 text-white text-shadow-lg hover:bg-amber-500 border-2 border-amber-600 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1" : "text-white text-shadow-lg bg-red-400 hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-2 py-1 rounded-lg shadow-lg cursor-pointer absolute right-1 top-1"}
+                                        onClick={() => { setIsBodyweight(!isBodyweight); setPendingWeight("") }}>
                                         {isBodyweight ? "Clear" : "BW?"}
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex gap-4 justify-between w-full items-center">
+                            <div className="flex flex-col gap-2 justify-between w-full max-w-full items-center">
                                 <label
                                     htmlFor="sets-input"
-                                    className="text-lg flex-1 text-center">
+                                    className="text-lg">
                                     Enter sets:
                                 </label>
                                 <input
@@ -240,7 +242,7 @@ export default function DayCard({
                             {pendingSets > 0 && (
                                 <>
                                     {Array.from({ length: pendingSets }).map((_, i) => (
-                                        <div key={i} className="flex gap-4 justify-between w-full items-center">
+                                        <div key={i} className="flex flex-col gap-2 justify-between w-full items-center">
                                             <label className="text-lg flex-1 text-center">{`Set ${i + 1}:`}</label>
                                             <input
                                                 type="number"
@@ -259,9 +261,8 @@ export default function DayCard({
                                 </>
                             )}
                             <div className="flex gap-4">
-                                {/* ✅ Confirm Button */}
                                 <button
-                                    className="bg-white hover:bg-sky-100 border border-sky-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    className="text-white text-shadow-lg bg-sky-400 hover:bg-sky-500 border-2 border-sky-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                     onClick={() => {
                                         const missing = [];
                                         let isError = false;
@@ -284,9 +285,7 @@ export default function DayCard({
                                         }
                                         if (isError) return setWarningMessage(missing);
 
-                                        // ✅ Different behavior depending on edit vs add
                                         if (showModal.Type === "edit-exercise") {
-                                            // Replace the existing exercise at that index
                                             setSchedules(
                                                 schedules.map((d) =>
                                                     d.Day === s.Day
@@ -296,7 +295,7 @@ export default function DayCard({
                                                                 idx === showModal.Index
                                                                     ? {
                                                                         Exercise: pendingExercise,
-                                                                        Weight: pendingWeight,
+                                                                        Weight: isBodyweight ? "Bodyweight" : pendingWeight,
                                                                         Sets: pendingSets,
                                                                         Reps: pendingReps,
                                                                     }
@@ -307,7 +306,6 @@ export default function DayCard({
                                                 )
                                             );
                                         } else {
-                                            // Add a new exercise
                                             setSchedules(
                                                 schedules.map((d) =>
                                                     d.Day === s.Day
@@ -317,7 +315,7 @@ export default function DayCard({
                                                                 ...d.Exercises,
                                                                 {
                                                                     Exercise: pendingExercise,
-                                                                    Weight: pendingWeight,
+                                                                    Weight: isBodyweight ? "Bodyweight" : pendingWeight,
                                                                     Sets: pendingSets,
                                                                     Reps: pendingReps,
                                                                 },
@@ -328,7 +326,6 @@ export default function DayCard({
                                             );
                                         }
 
-                                        // Reset everything
                                         setPendingExercise("");
                                         setPendingWeight("");
                                         setPendingSets("");
@@ -341,9 +338,8 @@ export default function DayCard({
                                     Confirm
                                 </button>
 
-                                {/* ❌ Cancel Button */}
                                 <button
-                                    className="bg-white hover:bg-red-100 border border-red-400 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+                                    className="text-white text-shadow-lg bg-red-400 hover:bg-red-500 border-2 border-red-600 transition-colors duration-200 text-lg px-4 py-2 rounded-lg shadow-lg cursor-pointer"
                                     onClick={() => {
                                         setPendingExercise("");
                                         setPendingWeight("");
@@ -382,7 +378,6 @@ export default function DayCard({
                 </div>
             )}
 
-            {/* --- Exercise Delete Modal --- */}
             {showModal.Type === "exercise" && showModal.Day === s.Day && (
                 <ConfirmModal
                     message={

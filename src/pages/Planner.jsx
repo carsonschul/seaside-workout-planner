@@ -28,17 +28,17 @@ export default function Planner() {
             { Day: "Monday", Muscle: "Focus: Full Body" },
             { Day: "Tuesday", Muscle: "Rest Day" },
             { Day: "Wednesday", Muscle: "Focus: Full Body" },
-            { Day: "Thursday", Muscle: " Rest Day" },
+            { Day: "Thursday", Muscle: "Rest Day" },
             { Day: "Friday", Muscle: "Focus: Full Body" },
             { Day: "Saturday", Muscle: "Rest Day" },
             { Day: "Sunday", Muscle: "Rest Day" }
         ],
         "Upper Lower": [
-            { Day: "Monday", Muscle: "Focus: Upper Lower" },
-            { Day: "Tuesday", Muscle: "Focus: Upper Lower" },
+            { Day: "Monday", Muscle: "Focus: Upper" },
+            { Day: "Tuesday", Muscle: "Focus: Lower" },
             { Day: "Wednesday", Muscle: "Rest Day" },
-            { Day: "Thursday", Muscle: "Focus: Upper Lower" },
-            { Day: "Friday", Muscle: "Focus: Upper Lower" },
+            { Day: "Thursday", Muscle: "Focus: Upper" },
+            { Day: "Friday", Muscle: "Focus: Lower" },
             { Day: "Saturday", Muscle: "Rest Day" },
             { Day: "Sunday", Muscle: "Rest Day" }
         ],
@@ -76,9 +76,9 @@ export default function Planner() {
 
     return (
         <div
-            className="flex flex-col min-h-screen items-center gap-4">
+            className="flex flex-col md:min-h-screen min-h-[100dvh] items-center gap-6 bg-gradient-to-b from-gray-50 via-white to-gray-100 pb-6">
             <h1
-                className="text-5xl font-bold text-center w-screen p-6 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg tracking-wide rounded border-y-4 border-amber-400">
+                className="text-5xl text-shadow-lg font-bold text-center w-full p-6 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg tracking-wide rounded border-y-4 border-amber-400">
                 Plan Your Workout
             </h1>
             <Instructions

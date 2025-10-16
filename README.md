@@ -1,16 +1,55 @@
-# React + Vite
+# 🏋️‍♂️ Seaside High School Workout Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Live Demo:** [https://workout-planner-2.netlify.app](https://workout-planner-2.netlify.app)
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🧠 Overview
+The **Seaside High School Workout Planner** is a full-stack fitness scheduling app inspired by my old high school.  
+It allows users to plan, customize, and save weekly workout routines — or simply try the **Planner Demo** without creating an account.
 
-## React Compiler
+Built with a **React + Vite frontend** and a **Node.js / Express / Prisma backend** connected to a PostgreSQL database.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ⚙️ Features
+- 🔐 Create an account to save workout plans securely.  
+- 🏋️ Add exercises, sets, reps, and focus areas for each day.  
+- 🧩 Choose from pre-built splits:
+  - Full Body  
+  - Push / Pull / Legs  
+  - Upper / Lower  
+  - Bro Split  
+- 🧭 Planner Demo mode (no login required).  
+- 🎨 Clean, responsive UI built with Tailwind CSS.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🧩 Tech Stack
+**Frontend:** React, Vite, Tailwind CSS  
+**Backend:** Node.js, Express, Prisma, PostgreSQL  
+**Auth:** JWT (JSON Web Tokens)  
+**Deployment:** Netlify (frontend) + Render (backend)
+
+---
+
+## 🚀 Try the Demo
+1. Visit **[https://workout-planner-2.netlify.app](https://workout-planner-2.netlify.app)**  
+2. Use the **Planner Demo** button to try it instantly.  
+3. Or sign up / log in to save your own workout plans permanently.
+
+---
+
+## 💡 Inspiration
+This project was inspired by the strength training program at **Seaside High School**.  
+It serves as both a fitness planner and a showcase of my **full-stack web development skills**.
+
+---
+
+## 🧑‍💻 Developer Notes
+- Built in roughly **two weeks**.  
+- Uses Seaside’s red, white, blue, and yellow color palette.  
+- Designed for both desktop and mobile users.  
+- Created as part of my personal portfolio to demonstrate front-end and back-end integration.
+
+---
